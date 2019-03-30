@@ -25,6 +25,7 @@ feature -- command
 --			if (model.history.before) then
 --				model.set_undoredo (true, " Nothing to undo -> Start a new game%N")
 --			end
+			
 			if model.history.on_item and not model.history.before and (model.history.count >= 1) then
 				model.history.item.undo
 				model.history.back

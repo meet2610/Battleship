@@ -78,7 +78,7 @@ feature
 
     	do
 			-- perform some update on the model state
-
+			if (valid_shot) then
 			if (model.debug_mode) then
 				model.board[coordinate1.row.as_integer_32, coordinate1.column.as_integer_32] := create {SHIP_ALPHABET}.make ('O')
 				model.set_hit (false)
@@ -149,7 +149,7 @@ feature
 				end
 				end
 				model.update_shot
-
+			end
 
     	end
 
@@ -158,6 +158,9 @@ feature
 		local
 			temp: INTEGER
 		do
+			if (valid_shot) then
+
+
 			if (model.debug_mode) then
 				model.board[coordinate1.row.as_integer_32, coordinate1.column.as_integer_32] := create {SHIP_ALPHABET}.make ('_')
 --				model.set_hit (false)
@@ -231,6 +234,7 @@ feature
 			end
 			model.undo_shot
 			model.undo_score (undo_score)
+			end
 
 
 		end

@@ -153,6 +153,7 @@ feature
 		do
 			create board.make_filled (create {SHIP_ALPHABET}.make ('_'), 12, 12)
 			create history.make
+			history.wipe_out
 
 			undoredo := False
 			undoredo_msg := ""
@@ -350,7 +351,36 @@ feature
 			game_over := False
 		end
 
-
+	revert_stuff
+		do
+			undoredo := False
+			undoredo_msg := ""
+			no_undoredo := False
+			no_undoredo_msg := ""
+			give_up_out := ""
+			valid_setup_msg:= False
+			valid_setup_out := ""
+--			game_started := False
+--			debug_mode := False
+--			no_more_bombs := False
+--			no_more_shots := False
+			no_bombs_shots := False
+			invalid_cord := False
+			repeat_fire := False
+			bad_bomb_msg := False
+			miss := False
+			hit := False
+--			game_active := False
+			bomb_msg := False
+			shot_msg := False
+			new_game := False
+			ship_msg := ""
+			no_game := ""
+			ship_1 := ""
+			ship_2 := ""
+--			played_move := False
+			repeat_fire := False
+		end
 	revert_values
 		  do
 		  	max_total_score := max_total_score - max_score
@@ -362,25 +392,34 @@ feature
 
 	undoredo_change (b: BOOLEAN; msg: STRING_8)
 		do
+
 			undoredo := b
 			undoredo_msg := msg
+
 		end
 
 	set_undoredo (b: BOOLEAN; msg: STRING_8)
 		do
 			no_undoredo := b
 			no_undoredo_msg := msg
+
 		end
 
 	undo_bomb
 		do
 			thrown_bombs := thrown_bombs -1
+			if (thrown_bombs ~ 0 and thrown_shots ~ 0) then
+				played_move := False
+			end
 			no_more_bombs := False
 		end
 
 	undo_shot
 		do
 			thrown_shots := thrown_shots -1
+			if (thrown_bombs ~ 0 and thrown_shots ~ 0) then
+				played_move := False
+			end
 			no_more_shots := False
 		end
 
@@ -396,6 +435,7 @@ feature
 	update_bomb
 		do
 			thrown_bombs := thrown_bombs + 1
+			played_move := true
 			if (thrown_bombs = max_bombs) then
 				no_more_bombs := True
 			end
@@ -403,6 +443,7 @@ feature
 
 	update_shot
 		do
+			played_move := true
 			thrown_shots := thrown_shots + 1
 			if (thrown_shots = max_shots) then
 				no_more_shots := True
@@ -414,6 +455,10 @@ feature
 			Result := False
 			if (cord.row <= board_s.to_integer_64 and cord.row >= 1 and cord.column <= board_s.to_integer_64 and cord.column >= 1) then
 				Result := True
+			end
+			if (Result) then
+				repeat_fire := (board [cord.row.as_integer_32, cord.column.as_integer_32].item = 'X' or board [cord.row.as_integer_32, cord.column.as_integer_32].item = 'O') or repeat_fire
+
 			end
 		end
 
@@ -562,6 +607,15 @@ feature
 				game_active := False
 				game_over := True
 			end
+			if (no_more_shots and no_more_bombs) then
+				if (ship_2.is_equal ("") or ship_2.is_equal (ship_1)) then
+					ship_msg := " OK -> " + sh.size.out + "x1 ship sunk! Game Over!%N"
+				else
+					ship_msg := " OK -> " + ship_1 + " and " + ship_2 + " ships sunk! Game Over!%N"
+				end
+				game_active := False
+				game_over := True
+			end
 		end
 
 feature
@@ -578,6 +632,13 @@ feature
 
 			if (z = 0) then
 				Result.append (" OK -> Start a new game")
+			elseif (game_active) then
+				if (not played_move) then
+					Result.append (" Game already started -> Fire Away!%N")
+				else
+					Result.append (" Game already started -> Keep Firing!%N")
+				end
+				game_active := False
 			elseif (undoredo) then
 				Result.append (undoredo_msg)
 					ship_sunk := False
@@ -601,17 +662,11 @@ feature
 				if (played_move) then
 					Result.append (" Invalid coordinate -> Keep Firing!%N")
 				else
-					Result.append (" Invalid coordinate -> Fire Away%N")
+					Result.append (" Invalid coordinate -> Fire Away!%N")
 				end
 
 				invalid_cord := False
-			elseif (game_active) then
-				if (not played_move) then
-					Result.append (" Game already started -> Fire Away!%N")
-				else
-					Result.append (" Game already started -> Keep Firing!%N")
-				end
-				game_active := False
+
 			elseif (new_game) then
 				Result.append (" OK -> Fire Away!%N")
 				new_game := False
@@ -622,11 +677,12 @@ feature
 				Result.append (give_up_out)
 
 --				set_go_msg(true)
---				game_over := True
+				game_over := True
 --				game_active := False
 			elseif (valid_setup_msg) then
 				Result.append (valid_setup_out)
 				valid_setup_out := ""
+				valid_setup_msg := false
 			elseif (repeat_fire) then
 				Result.append (" Already fired there -> Keep Firing!%N")
 				repeat_fire := False
@@ -702,6 +758,7 @@ feature
 
 			end
 --			Result.append("%NHistory count: " + history.count.out)
+--		revert_stuff
 			default_update
 		end
 
@@ -745,7 +802,11 @@ feature
 					until
 						temp = sh.item.row + 1 + sh.item.size
 					loop
+						if (sh.item.col >= 10) then
+							Result.append ("[" + Row_indices.at (temp).out + "," + sh.item.col.out + "]->" + board [temp, sh.item.col].item.out)
+						else
 						Result.append ("[" + Row_indices.at (temp).out + ", " + sh.item.col.out + "]->" + board [temp, sh.item.col].item.out)
+						end
 						if (not (temp = sh.item.row + sh.item.size)) then
 							Result.append (";")
 						end
@@ -757,7 +818,11 @@ feature
 					until
 						temp = sh.item.col + 1 + sh.item.size
 					loop
+						if (temp >= 10) then
+						Result.append ("[" + Row_indices.at (sh.item.row).out + "," + temp.out + "]->" + board [sh.item.row, temp].item.out)
+						else
 						Result.append ("[" + Row_indices.at (sh.item.row).out + ", " + temp.out + "]->" + board [sh.item.row, temp].item.out)
+						end
 						if (not (temp = sh.item.col + sh.item.size)) then
 							Result.append (";")
 						end

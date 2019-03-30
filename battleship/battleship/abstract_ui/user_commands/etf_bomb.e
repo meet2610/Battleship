@@ -23,13 +23,14 @@ feature -- command
 			-- perform some update on the model state
 			if(not (model.game_over or (model.game_count < 1))) then
 				create op.make (coordinate1, coordinate2, false)
-
-
-			if (model.valid_cordinates(coordinate1) and model.valid_cordinates(coordinate2)) then
+			if(not model.no_more_bombs) then
 			if (model.valid_bomb(coordinate1,coordinate2)) then
 
+			if (model.valid_cordinates(coordinate1) and model.valid_cordinates(coordinate2)) then
 
-			if(not model.no_more_bombs) then
+
+
+
 			if (not model.repeat_fire) then
 				model.update_bomb
 				op.set_bomb_valid (true)
@@ -142,14 +143,16 @@ feature -- command
 				end
 			end
 			end
-			else
-				model.set_bomb_msg(true)
 
-			end
 		--		model.bad_bomb (false)
-			end
+
 			else
 				model.set_invalid_cord (true)
+			end
+
+			end
+			else
+				model.set_bomb_msg(true)
 
 			end
 			if (not op.get_bomb_valid) then

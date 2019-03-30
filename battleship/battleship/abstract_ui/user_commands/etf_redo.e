@@ -16,6 +16,7 @@ feature -- command
 		local
 			s : STRING_8
     	do
+    		
 			-- perform some update on the model state
 			if (not model.history.after) then
 				model.history.forth
@@ -41,7 +42,9 @@ feature -- command
 				model.undoredo_change (true, s)
 --				model.set_message ("ok")
 			else
---				model.history.back
+				if(not model.history.before) then
+				model.history.back
+				end
 				if(not (model.game_over or (model.game_count < 1))) then
 					if (model.played_move) then
 						model.set_undoredo (true, " Nothing to redo -> Keep Firing!%N")
@@ -54,6 +57,7 @@ feature -- command
 					model.set_undoredo (true, " Nothing to redo -> Start a new game")
 				end
 			end
+
 			etf_cmd_container.on_change.notify ([Current])
     	end
 

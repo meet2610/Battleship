@@ -29,10 +29,15 @@ feature -- command
 				new_ships := model.generate_ships(true, dimension.as_integer_32, ships.as_integer_32)
 		   model.setup_values (max_shots.as_integer_32, num_bombs.as_integer_32, ((ships.as_integer_32 * (ships.as_integer_32+1))/2).rounded)
 		   model.set_new_game (true)
+		   create op.make(true)
+				model.history.extend_history (op)
 
 			place_new_ships(model.board, new_ships)
+
 			end
 			else
+				create op.make(true)
+				model.history.extend_history (op)
 				if (model.game_over) then
 				if (valid_setup(dimension, ships, max_shots, num_bombs)) then
 				model.make_empty
@@ -41,13 +46,15 @@ feature -- command
 		   model.set_new_game (true)
 
 			place_new_ships(model.board, new_ships)
+
 			end
 				else
+
 				model.set_game_active (true)
 				end
 			end
-			create op.make(true)
-				model.history.extend_history (op)
+
+
 			etf_cmd_container.on_change.notify ([Current])
 
 

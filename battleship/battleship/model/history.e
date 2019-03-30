@@ -71,6 +71,7 @@ feature -- comands
 		do
 			remove_right
 			history.extend(a_op)
+
 			history.finish
 		ensure
 			history[history.count] = a_op

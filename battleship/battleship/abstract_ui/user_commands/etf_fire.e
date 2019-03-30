@@ -26,10 +26,11 @@ feature -- command
 			-- perform some update on the model state
 			if(not (model.game_over or (model.game_count < 1))) then
 				create op.make (coordinate1)
+			if (not model.no_more_shots) then
 			if (model.valid_cordinates(coordinate1)) then
 
 
-			if (not model.no_more_shots) then
+
 			if (not model.repeat_fire) then
 				op.set_shot_valid (true)
 				model.history.extend_history (op)
@@ -105,12 +106,13 @@ feature -- command
 				end
 			end
 			end
+
+			else
+			model.set_invalid_cord (true)
+			end
 			else
 			model.set_shot_msg (true)
 
-			end
-			else
-			model.set_invalid_cord (true)
 			end
 			if (not op.get_shot_valid) then
 				model.history.extend_history (op)
