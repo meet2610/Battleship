@@ -1,0 +1,14 @@
+debug_test(easy)
+bomb([B, 4],[C, 4])
+fire([C, 3])
+-- easy game win, start a new hard game
+
+debug_test(hard)
+bomb([C, 2],[C, 3])
+-- 2x1 ship sunk 
+
+give_up
+-- score not restore
+
+debug_test(hard)
+give_up

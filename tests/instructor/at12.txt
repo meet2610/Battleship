@@ -1,0 +1,5 @@
+debug_test(easy)
+fire([G,5])
+bomb([A,1],[E,7])
+
+--Try to fire an invalid coor followed by bombing with one invalid coor

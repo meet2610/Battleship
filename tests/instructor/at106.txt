@@ -1,0 +1,5 @@
+-- user test 2
+debug_test(easy)
+give_up
+custom_setup_test(6,3,30,3)
+

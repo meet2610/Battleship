@@ -1,0 +1,11 @@
+debug_test(easy)
+undo
+redo
+fire([C,2])
+undo
+redo
+give_up
+undo
+redo
+debug_test(advanced)
+

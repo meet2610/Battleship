@@ -1,0 +1,6 @@
+debug_test(easy)
+bomb([A,1],[A,2])
+undo
+redo
+undo
+redo

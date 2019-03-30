@@ -1,0 +1,3 @@
+debug_test(easy)
+debug_test(hard)
+--Start two new game of different diff in debug and check for fail

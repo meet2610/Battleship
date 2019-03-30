@@ -1,0 +1,4 @@
+debug_test(advanced)
+bomb([D,2],[D,3])
+
+--Checking bomb on a hit and miss combo

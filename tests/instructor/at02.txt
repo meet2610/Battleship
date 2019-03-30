@@ -1,0 +1,1 @@
+debug_test(medium)	-- start med game in debug

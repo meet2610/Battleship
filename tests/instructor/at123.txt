@@ -1,0 +1,14 @@
+custom_setup(7,4,4,4)
+custom_setup(7,3,35,3)
+give_up
+custom_setup_test(7,3,35,3)
+give_up
+debug_test(easy)
+give_up
+debug_test(medium)
+give_up
+new_game(medium)
+give_up
+custom_setup_test(7,3,35,3)
+
+

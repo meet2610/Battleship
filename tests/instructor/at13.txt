@@ -1,0 +1,9 @@
+debug_test(easy)
+bomb([D,4],[D,3])
+fire([A,1])
+fire([D,1])
+fire([B,4])
+bomb([C,2],[C,3])
+bomb([B,2],[B,3])
+
+--series of bombs and fires followed by firing when bombs run out

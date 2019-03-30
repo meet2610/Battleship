@@ -1,0 +1,8 @@
+debug_test(easy)
+fire([C,3])
+debug_test(easy)
+fire([C,4])
+new_game(easy)
+fire([B,4])
+debug_test(easy)
+debug_test(easy)

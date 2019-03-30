@@ -1,0 +1,4 @@
+debug_test(hard)
+bomb([A,1],[A,2])
+fire([A,1])
+--try to shoot on an already fired coordinate

@@ -1,0 +1,5 @@
+bomb([A,2],[A,3])
+fire([A,2])
+bomb([B,2],[B,3])
+
+--Try to bomb and fire without game started along with duplicate bomb and fire coordinate

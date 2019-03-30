@@ -1,0 +1,1 @@
+debug_test(hard)	-- start easy game in hard

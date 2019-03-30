@@ -1,0 +1,2 @@
+bomb([A,1],[A,2])
+--Try to fire without game started

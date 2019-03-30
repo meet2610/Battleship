@@ -1,0 +1,5 @@
+debug_test(easy)
+debug_test(medium)
+
+--Start two games of different difficulty and check for fail	
+

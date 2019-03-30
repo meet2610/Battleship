@@ -1,0 +1,9 @@
+debug_test(easy)
+give_up
+debug_test(easy)
+give_up
+debug_test(medium)
+give_up
+new_game(easy)
+give_up
+debug_test(easy)

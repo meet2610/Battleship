@@ -1,0 +1,7 @@
+debug_test(easy)
+give_up
+debug_test(easy)
+give_up
+debug_test(medium)
+give_up
+debug_test(hard)

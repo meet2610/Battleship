@@ -1,0 +1,2 @@
+fire([A,1])
+--try to fire without game started

@@ -1,0 +1,17 @@
+custom_setup_test(4,2,1,1)
+give_up
+undo
+redo
+custom_setup_test(12,2,1,1)
+custom_setup_test(12,4,1,1)
+custom_setup_test(12,4,2,1)
+custom_setup_test(12,4,12,1)
+custom_setup_test(12,4,12,5)
+custom_setup(12,4,12,5)
+give_up
+undo
+fire([C,3])
+undo
+redo
+bomb([B,4],[C,4])
+new_game(advanced)

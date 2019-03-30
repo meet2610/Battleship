@@ -1,0 +1,11 @@
+debug_test(advanced)
+new_game(Hard)
+fire(B,5)
+bomb([A,1],[A,2])
+fire([A,1])
+fire([H,8])
+debug_test(easy)
+bomb([H,8],[H,10])
+fire([H,10])
+
+--A series of errors occuring simultaneously to check prioritiztion for output

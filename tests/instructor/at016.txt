@@ -1,0 +1,3 @@
+debug_test(easy)
+fire([E,3])
+debug_test(easy)

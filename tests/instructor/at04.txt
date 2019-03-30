@@ -1,0 +1,3 @@
+new_game(easy)	
+new_game(easy)
+--Start two easy games and see if it provides an erro
