@@ -153,7 +153,7 @@ feature
 		do
 			create board.make_filled (create {SHIP_ALPHABET}.make ('_'), 12, 12)
 			create history.make
-			history.wipe_out
+
 
 			undoredo := False
 			undoredo_msg := ""

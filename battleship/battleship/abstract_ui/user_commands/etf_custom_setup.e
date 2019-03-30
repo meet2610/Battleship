@@ -34,8 +34,7 @@ feature -- command
 				model.history.extend_history (op)
 			end
 			else
-				create op.make(true)
-				model.history.extend_history (op)
+
 				if (model.game_over) then
 				if (valid_setup(dimension, ships, max_shots, num_bombs)) then
 				model.make_empty
@@ -49,6 +48,8 @@ feature -- command
 				else
 				model.set_game_active (true)
 				end
+				create op.make(true)
+				model.history.extend_history (op)
 			end
 
 
