@@ -1,0 +1,7 @@
+  state 0 OK -> Start a new game
+->bomb([A, 2],[A, 3])
+  state 1 Game not started -> Start a new game
+->fire([A, 2])
+  state 2 Game not started -> Start a new game
+->bomb([B, 2],[B, 3])
+  state 3 Game not started -> Start a new game

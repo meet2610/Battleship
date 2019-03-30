@@ -1,0 +1,2 @@
+Syntax Error: specification of command executions cannot be parsed
+Too many arguments passed for "fire" (Line 3, Column 8)

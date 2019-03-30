@@ -1,0 +1,3 @@
+  state 0 OK -> Start a new game
+->bomb([A, 4],[D, 4])
+  state 1 Game not started -> Start a new game

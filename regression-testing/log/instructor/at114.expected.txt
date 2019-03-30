@@ -1,0 +1,3 @@
+  state 0 OK -> Start a new game
+->redo
+  state 1 Nothing to redo -> Start a new game

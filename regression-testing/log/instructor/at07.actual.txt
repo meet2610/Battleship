@@ -1,0 +1,3 @@
+  state 0 OK -> Start a new game
+->fire([A, 1])
+  state 1 Game not started -> Start a new game
