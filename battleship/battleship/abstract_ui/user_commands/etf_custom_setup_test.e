@@ -13,6 +13,9 @@ create
 	make
 feature -- command
 	custom_setup_test(dimension: INTEGER_64 ; ships: INTEGER_64 ; max_shots: INTEGER_64 ; num_bombs: INTEGER_64)
+		-- Signals ETF_MODEL to output error messages if there is an error
+		-- If there are no errors, creates a new game
+		-- Stores information about the new game as MOVE MAKE_GAME in board history
 		require else
 			custom_setup_test_precond(dimension, ships, max_shots, num_bombs)
     	local
@@ -65,6 +68,8 @@ feature
 
 
 	valid_setup(dimension64: INTEGER_64 ; ships64: INTEGER_64 ; max_shots64: INTEGER_64 ; num_bombs64: INTEGER_64) : BOOLEAN
+		-- Checks if inputted setup is valid
+		-- Sends error messages to ETF_MODEL
 		local
 		dimension: INTEGER_32
 		ships: INTEGER_32

@@ -13,6 +13,8 @@ create
 	make
 feature -- command
 	give_up
+		-- Ends current game if its in progress
+		-- Sends error message to ETF_MODEL
     	do
 			-- perform some update on the model state
 			if ((model.game_started and (model.game_count >= 1)) and (not model.game_over)) then

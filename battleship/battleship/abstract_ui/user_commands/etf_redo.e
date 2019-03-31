@@ -13,22 +13,18 @@ create
 	make
 feature -- command
 	redo
+		-- redos the previously un-done move
+		-- Sends error messages to ETF_MODEL
+		-- Sends the re-done move's message to ETF_MODEL
 		local
 			s : STRING_8
     	do
-    		
+
 			-- perform some update on the model state
 			if (not model.history.after) then
 				model.history.forth
 			end
---			if	model.history.before
---				or not model.history.after
---			then
---				model.history.forth
---			end
---			if (model.history.after) then
---				model.set_undoredo (true, " Nothing to redo -> Start a new game%N")
---			end
+
 			-- redo
 			if (model.history.on_item and (not model.history.after)) then
 
@@ -40,7 +36,7 @@ feature -- command
 					s := " Nothing to redo -> Fire Away!%N" -- " (= state 1) OK -> Fire Away!%N"
 				end
 				model.undoredo_change (true, s)
---				model.set_message ("ok")
+
 			else
 				if(not model.history.before) then
 				model.history.back

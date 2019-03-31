@@ -14,35 +14,27 @@ create
 feature -- command
 
 	undo
+		-- undos a move previously made
+		-- Sends error messages to ETF_MODEL
+		-- Sends the un-done move's message to ETF_MODEL
     	local
 		s: STRING_8
     	do
 			-- perform some update on the model state
---			if not model.history.before then
---				model.history.back
---			end
---			s := ""
---			if (model.history.before) then
---				model.set_undoredo (true, " Nothing to undo -> Start a new game%N")
---			end
-			
+
 			if model.history.on_item and not model.history.before and (model.history.count >= 1) then
 				model.history.item.undo
 				model.history.back
 
-				if (model.history.on_item) then
+
 				s := " (= state " + model.history.item.get_state.out + ")" + model.history.item.get_undo_msg + ""
-				else
-					s := " Nothing to undo -> Fire Away!???%N" --" (= state 1) OK -> Fire Away!%N"
-				end
+
+
 
 				model.undoredo_change (true, s)
 
---				model.set_undoredo (b: BOOLEAN, msg: STRING_8)
-
---				model.set_message ("ok")
 			else
---				model.history.forth
+
 				if(not (model.game_over or (model.game_count < 1))) then
 					if (model.played_move) then
 						model.set_undoredo (true, " Nothing to undo -> Keep Firing!%N")

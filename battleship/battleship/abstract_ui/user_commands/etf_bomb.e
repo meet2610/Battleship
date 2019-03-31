@@ -14,6 +14,10 @@ create
 	make
 feature -- command
 	bomb(coordinate1: TUPLE[row: INTEGER_64; column: INTEGER_64] ; coordinate2: TUPLE[row: INTEGER_64; column: INTEGER_64])
+		-- Signals ETF_MODEL to output error messages if there is an error
+		-- If there are no errors, fires a BOMB
+		-- Stores information about the bomb as MOVE BOMB in board history
+
 		require else
 			bomb_precond(coordinate1, coordinate2)
 		local

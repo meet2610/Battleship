@@ -32,40 +32,47 @@ feature {NONE} -- constructor
 		end
 
 feature
+	
 	set_undo_msg (msg: STRING_8)
+		-- stores the message output of ETF_MODEL for the given move
 		do
 			undo_msg := msg
 		end
 
 	set_state (i: INTEGER)
+		-- stores the state number at which this move occured
 		do
 			state := i
 		end
-
 	set_undo_score (i: INTEGER)
+		-- stores the change in score that occured by this move
 		do
-			undo_score := i
+			undo_score:= i
 		end
 
 	set_shot_valid (b: BOOLEAN)
+		-- stores information regarding if this shot was valid or not
 		do
 			valid_shot := b
 		end
 
 	get_shot_valid : BOOLEAN
+		-- returns if move was valid
 		do
 			Result := valid_shot
 		end
-
 	get_undo_msg: STRING_8
+		-- returns the output message from ETF_MODEL that was stored
 		do
 			Result := undo_msg
 		end
 	get_state: INTEGER
+		-- returns the state at which this move occured
 		do
 			Result := state
 		end
 	get_undo_score: INTEGER
+		-- returns how much the score changed by with this move
 		do
 			Result := undo_score
 		end

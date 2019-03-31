@@ -17,6 +17,9 @@ create
 feature -- command
 
 	fire(coordinate1: TUPLE[row: INTEGER_64; column: INTEGER_64])
+		-- Signals ETF_MODEL to output error messages if there is an error
+		-- If there are no errors, fires a SHOT
+		-- Stores information about the bomb as MOVE FIRE in board history
 		require else
 			fire_precond(coordinate1)
 		local

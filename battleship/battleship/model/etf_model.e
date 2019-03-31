@@ -128,20 +128,14 @@ feature -- attributes
 
 	undoredo_msg : STRING_8
 
+	z: INTEGER_32
+
 	ships: ARRAYED_LIST [TUPLE [size: INTEGER_32; row: INTEGER_32; col: INTEGER_32; dir: BOOLEAN]]
 		attribute
 			create Result.make_filled (0)
 		end
 
 	Row_indices: ARRAY [CHARACTER_8]
-			-- creation
-			--	make
-			--			-- Initialization for `Current`.
-			--		do
-			--			create s.make_empty
-			--			z := 0
-			--		end
-			--makes an empty board
 		once
 			Result := <<'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'>>
 		end
@@ -149,7 +143,9 @@ feature -- attributes
 feature
 
 	make_empty
-			-- utilities
+		-- create an empty board
+		-- create an empty history
+		-- instantiate attributes that defer per game
 		do
 			create board.make_filled (create {SHIP_ALPHABET}.make ('_'), 12, 12)
 			create history.make
@@ -184,7 +180,13 @@ feature
 			repeat_fire := False
 		end
 
-feature
+
+	reset
+		do
+			make_empty
+		end
+
+feature -- Ship generation
 
 	generate_ships (is_debug_mode: BOOLEAN; board_size: INTEGER_32; num_ships: INTEGER_32): ARRAYED_LIST [TUPLE [size: INTEGER_32; row: INTEGER_32; col: INTEGER_32; dir: BOOLEAN]]
 		local
@@ -198,9 +200,7 @@ feature
 			ship_count := num_ships
 			game_started := True
 			debug_mode := is_debug_mode
-			if (not debug_mode) then
---				debug_gen.revert
-			end
+
 			create Result.make (num_ships)
 			if is_debug_mode then
 				gen := debug_gen
@@ -277,7 +277,10 @@ feature
 				end
 		end
 
+feature -- Setting up game values
+
 	set_values (level: INTEGER_64)
+		-- Sets shots, bombs, and score value for game depending on difficulty level of ETF_NEW_GAME and ETF_DEBUG_TEST
 		do
 			if (prev_game_revert) then
 				revert_values
@@ -322,6 +325,7 @@ feature
 		end
 
 	setup_values (ms1 : INTEGER_32; mb1 : INTEGER_32; score1: INTEGER_32)
+		-- Sets shots, bombs, score values depending on the values given by ETF_CUSTOM_SETUP_TEST and ETF_CUSTOM_SETUP
 		do
 			if (prev_game_revert) then
 				revert_values
@@ -351,37 +355,9 @@ feature
 			game_over := False
 		end
 
-	revert_stuff
-		do
-			undoredo := False
-			undoredo_msg := ""
-			no_undoredo := False
-			no_undoredo_msg := ""
-			give_up_out := ""
-			valid_setup_msg:= False
-			valid_setup_out := ""
---			game_started := False
---			debug_mode := False
---			no_more_bombs := False
---			no_more_shots := False
-			no_bombs_shots := False
-			invalid_cord := False
-			repeat_fire := False
-			bad_bomb_msg := False
-			miss := False
-			hit := False
---			game_active := False
-			bomb_msg := False
-			shot_msg := False
-			new_game := False
-			ship_msg := ""
-			no_game := ""
-			ship_1 := ""
-			ship_2 := ""
---			played_move := False
-			repeat_fire := False
-		end
+
 	revert_values
+		-- reverts game score to end of previous game if game was given up using ETF_GIVE_UP
 		  do
 		  	max_total_score := max_total_score - max_score
 		  	total_score := total_score - score
@@ -390,22 +366,11 @@ feature
 
 		  end
 
-	undoredo_change (b: BOOLEAN; msg: STRING_8)
-		do
 
-			undoredo := b
-			undoredo_msg := msg
-
-		end
-
-	set_undoredo (b: BOOLEAN; msg: STRING_8)
-		do
-			no_undoredo := b
-			no_undoredo_msg := msg
-
-		end
+feature -- updating game values
 
 	undo_bomb
+		-- decreases bomb thrown count by 1
 		do
 			thrown_bombs := thrown_bombs -1
 			if (thrown_bombs ~ 0 and thrown_shots ~ 0) then
@@ -415,6 +380,7 @@ feature
 		end
 
 	undo_shot
+		-- decreases shot thrown count by 1
 		do
 			thrown_shots := thrown_shots -1
 			if (thrown_bombs ~ 0 and thrown_shots ~ 0) then
@@ -424,6 +390,8 @@ feature
 		end
 
 	undo_score (i: INTEGER)
+		-- decreases score and total_score by i
+		-- decreases count of destroyed_ship, if ship was shunk
 		do
 			score := score - i
 			total_score := total_score - i
@@ -433,6 +401,7 @@ feature
 		end
 
 	update_bomb
+		-- increases bomb thrown by 1
 		do
 			thrown_bombs := thrown_bombs + 1
 			played_move := true
@@ -442,6 +411,7 @@ feature
 		end
 
 	update_shot
+		-- increases shot thrown by 1
 		do
 			played_move := true
 			thrown_shots := thrown_shots + 1
@@ -450,7 +420,18 @@ feature
 			end
 		end
 
+	update_state
+		-- increases game state by 1
+		do
+			z := z + 1
+		end
+
+
+feature -- checking for valid shot and bomb
+
 	valid_cordinates (cord: TUPLE [row: INTEGER_64; column: INTEGER_64]): BOOLEAN
+		-- checks for valid cordinates for ETF_FIRE and ETF_BOMB
+		-- checks for repeat_fire
 		do
 			Result := False
 			if (cord.row <= board_s.to_integer_64 and cord.row >= 1 and cord.column <= board_s.to_integer_64 and cord.column >= 1) then
@@ -463,6 +444,8 @@ feature
 		end
 
 	valid_bomb (cord1: TUPLE [row: INTEGER_64; column: INTEGER_64]; cord2: TUPLE [row: INTEGER_64; column: INTEGER_64]): BOOLEAN
+		-- checks if bomb cordinates from ETF_BOMB are adjacent
+		-- checks for repeat_fire
 		do
 			Result := False
 			if (cord1.column ~ cord2.column) then
@@ -478,8 +461,27 @@ feature
 		end
 
 
+feature -- Message and Error handling
+
+	undoredo_change (b: BOOLEAN; msg: STRING_8)
+		-- Recieves message if undo or redo changed state of the game
+		do
+
+			undoredo := b
+			undoredo_msg := msg
+
+		end
+
+	set_undoredo (b: BOOLEAN; msg: STRING_8)
+		-- Recieves message if there was nothing to undo or redo
+		do
+			no_undoredo := b
+			no_undoredo_msg := msg
+
+		end
 
 	setup_valid (b: BOOLEAN; msg: STRING_8)
+		-- Recieves message if ETF_CUSTOM_SETUP_TEST or ETF_CUSTOM_SETUP had invalid setups
 		do
 			valid_setup_msg := b
 
@@ -491,6 +493,7 @@ feature
 		end
 
 	giveup( b:BOOLEAN; msg: STRING_8)
+		-- Recieves message if ETF_GIVE_UP ended a game in progress
 		do
 			give_up_msg := b
 			give_up_out := " " + msg + "%N"
@@ -498,36 +501,43 @@ feature
 		end
 
 	bad_bomb (b: BOOLEAN)
+		-- Signals to output invalid bomb message
 		do
 			bad_bomb_msg := b
 		end
 
 	set_game_active (b: BOOLEAN)
+		-- Signals to output game has already started
 		do
 			game_active := b
 		end
 
 	set_invalid_cord (b: BOOLEAN)
+		-- Signals to output cordinates are invalid
 		do
 			invalid_cord := b
 		end
 
 	set_bomb_msg (b: BOOLEAN)
+		-- Signals to output there are no more bombs
 		do
 			bomb_msg := b
 		end
 
 	set_shot_msg (b: BOOLEAN)
+		-- Signals to output there are no more shots
 		do
 			shot_msg := b
 		end
 
 	set_miss (b: BOOLEAN)
+		-- Signals to output that Bomb or Shot missed all ships
 		do
 			miss := b
 		end
 
 	set_hit (b: BOOLEAN)
+		-- Signals to output that Bomb or Shot hit one or more ship
 		do
 			hit := b
 		end
@@ -538,6 +548,7 @@ feature
 		end
 
 	set_go_msg (b: BOOLEAN)
+		-- Signals to output game not started message
 		do
 			go_msg := b
 			if (game_count > 0) then
@@ -548,9 +559,10 @@ feature
 		end
 
 	ship_hit (sh: TUPLE [size: INTEGER_32; row: INTEGER_32; col: INTEGER_32; dir: BOOLEAN])
-			-- output
-			-- Return string representation of current game.
-			-- You may reuse this routine.
+		-- Checks if the ship that has been hit, is no sunked or not
+		-- Sets output message if ship has sunk
+		-- Updates score if ship has sunk
+		-- Checks if game is over or not
 		local
 			temp: INTEGER_32
 			sunk_count: INTEGER_32
@@ -618,11 +630,12 @@ feature
 			end
 		end
 
-feature
+
+
+feature -- output producer
 
 	out: STRING_8
-			-- New string containing terse printable representation
-			-- of current object
+			-- Produces output that matches the oracle character for character
 		local
 			fi: FORMAT_INTEGER
 		do
@@ -664,9 +677,7 @@ feature
 				else
 					Result.append (" Invalid coordinate -> Fire Away!%N")
 				end
-
 				invalid_cord := False
-
 			elseif (new_game) then
 				Result.append (" OK -> Fire Away!%N")
 				new_game := False
@@ -675,10 +686,7 @@ feature
 				go_msg := False
 			elseif (give_up_msg) then
 				Result.append (give_up_out)
-
---				set_go_msg(true)
 				game_over := True
---				game_active := False
 			elseif (valid_setup_msg) then
 				Result.append (valid_setup_out)
 				valid_setup_out := ""
@@ -696,8 +704,6 @@ feature
 				Result.append (no_undoredo_msg)
 				set_undoredo (false, "")
 				undoredo := true
-
-
 			elseif (hit) then
 				if (no_more_bombs and no_more_shots) then
 					Result.append (" OK -> Hit! Game Over!%N")
@@ -757,12 +763,13 @@ feature
 					prev_game_revert:= True
 
 			end
---			Result.append("%NHistory count: " + history.count.out)
---		revert_stuff
-			default_update
+
+			update_state
 		end
 
 	stats: STRING_8
+		-- Helps produce output for game stats regarding game count, shots, bombs, and score
+		-- Helps produce output for ships hit or sunk depending on debug_mode
 		do
 			create Result.make_from_string ("")
 			if (not (debug_mode ~ True)) then
@@ -784,6 +791,7 @@ feature
 		end
 
 	ships_out: STRING_8
+		-- Produces ship output for debug_mode
 		local
 			temp: INTEGER_32
 			sunk_count: INTEGER_32
@@ -840,6 +848,7 @@ feature
 		end
 
 	sunk_ship: STRING_8
+		-- Produces ship output for non debug_mode
 		local
 			temp: INTEGER_32
 			sunk_count: INTEGER_32
@@ -890,21 +899,7 @@ feature
 			end
 		end
 
-feature
 
-	z: INTEGER_32
-
-feature
-
-	default_update
-		do
-			z := z + 1
-		end
-
-	reset
-		do
-			make_empty
-		end
 
 end -- class ETF_MODEL
 

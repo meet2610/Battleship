@@ -13,6 +13,9 @@ create
 	make
 feature -- command
 	new_game(level: INTEGER_64)
+		-- Signals ETF_MODEL to output error messages if there is an error
+		-- If there are no errors, creates a new game
+		-- Stores information about the new game as MOVE MAKE_GAME in board history
 	require else
 			new_game_precond(level)
 	local
