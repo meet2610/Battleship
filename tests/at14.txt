@@ -1,0 +1,2 @@
+debug_test(easy)
+fire([A,3])

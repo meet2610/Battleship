@@ -1,0 +1,4 @@
+debug_test(advanced)
+bomb([A,1],[A,2])
+bomb([A,2],[A,3])
+--Try to bomb a coorinate already bombed
